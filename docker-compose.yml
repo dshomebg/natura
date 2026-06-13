@@ -1,0 +1,32 @@
+# Development stack for NATURA.
+# Only PostgreSQL runs in Docker during development — the Next.js/Payload app
+# runs on the host (npm run dev) for fast hot-reload. The full app container is
+# added for production deploy (see docker-compose.prod.yml, phase 8).
+#
+# Ports are offset from the existing "dshome-*" stack to avoid conflicts:
+#   Postgres -> host 5433 (container 5432)
+
+name: natura
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: natura-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-natura}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-natura}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - natura-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-natura} -d ${POSTGRES_DB:-natura}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  natura-postgres-data:
+    name: natura-postgres-data
