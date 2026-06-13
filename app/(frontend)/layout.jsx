@@ -1,12 +1,10 @@
-"use client";
-
-import { useEffect } from "react";
 import "@/public/assets/scss/styles.scss";
 import BackToTop from "@/components/common/BackToTop";
 import Mouse from "@/components/common/Mouse";
-import { usePathname } from "next/navigation";
 import SearchWrap from "@/components/common/SearchWrap";
-import { ToastContainer } from "react-toastify";
+import ClientEffects from "@/components/common/ClientEffects";
+import { SiteProvider } from "@/lib/SiteContext";
+import { getHeader, getFooter, getSiteSettings } from "@/lib/data";
 
 // Vendor stylesheets served statically from /public/assets/css.
 // Order matters for the cascade — kept identical to the original template.
@@ -22,36 +20,18 @@ const vendorStyles = [
   "/assets/css/color.css",
 ];
 
-export default function RootLayout({ children }) {
-  const path = usePathname();
-  useEffect(() => {
-    window.addEventListener("scroll", function () {
-      const header = document.getElementById("header-sticky");
-      if (window.scrollY > 250) {
-        header.classList.add("sticky");
-      } else {
-        header.classList.remove("sticky");
-      }
-    });
+export const metadata = {
+  title: "NATURA — строителство, ремонти и архитектура",
+  description:
+    "NATURA е строителна компания с фокус върху качество, устойчивост и модерна архитектура.",
+};
 
-    if (typeof window !== "undefined") {
-      // Import the script only on the client side
-      import("bootstrap/dist/js/bootstrap.esm").then(() => {
-        // Module is imported, you can access any exported functionality if
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    const { WOW } = require("wowjs");
-    const wow = new WOW({
-      animateClass: "animated",
-      offset: 100,
-      mobile: false,
-      live: false,
-    });
-    wow.init();
-  }, [path]);
+export default async function RootLayout({ children }) {
+  const [header, footer, settings] = await Promise.all([
+    getHeader(),
+    getFooter(),
+    getSiteSettings(),
+  ]);
 
   return (
     <html lang="bg">
@@ -61,21 +41,13 @@ export default function RootLayout({ children }) {
         ))}
       </head>
       <body>
-        <ToastContainer
-          position="top-right"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        {children}
-        <SearchWrap />
-        <BackToTop />
-        <Mouse />
+        <SiteProvider value={{ header, footer, settings }}>
+          <ClientEffects />
+          {children}
+          <SearchWrap />
+          <BackToTop />
+          <Mouse />
+        </SiteProvider>
       </body>
     </html>
   );

@@ -4,49 +4,56 @@ import Link from "next/link";
 import Offcanvas from "./Offcanvas";
 import { openMobilemenu } from "@/utlis/toggleMobilemenu";
 import Image from "next/image";
+import { useSiteData } from "@/lib/SiteContext";
+import { socialIcon } from "@/lib/socials";
+
 export default function Header2() {
+  const { settings, header } = useSiteData();
+  const socials = settings?.socials || [];
   return (
     <>
       <header className="header-section-2">
         <div className="container-fluid">
           <div className="header-top-wrapper-2">
             <ul className="contact-list">
-              <li>
-                <i className="far fa-envelope" />
-                <a href="mailto:info@example.com">info@example.com</a>
-              </li>
-              <li>
-                <i className="fa-sharp fa-solid fa-location-dot" />
-                4648 Rocky, New York
-              </li>
-              <li>
-                <i className="fa-regular fa-phone" />
-                <a href="tel:2086660112">+208-666-0112</a>
-              </li>
+              {settings?.email && (
+                <li>
+                  <i className="far fa-envelope" />
+                  <a href={`mailto:${settings.email}`}>{settings.email}</a>
+                </li>
+              )}
+              {settings?.address && (
+                <li>
+                  <i className="fa-sharp fa-solid fa-location-dot" />
+                  {settings.address}
+                </li>
+              )}
+              {settings?.phone && (
+                <li>
+                  <i className="fa-regular fa-phone" />
+                  <a href={`tel:${settings.phone.replace(/\s+/g, "")}`}>
+                    {settings.phone}
+                  </a>
+                </li>
+              )}
             </ul>
             <div className="top-right">
               <ul className="text-list">
                 <li>
-                  <Link href={`/contact`}>Privacy Policy</Link>
-                </li>
-                <li>
-                  <Link href={`/contact`}>Terms &amp; Conditions</Link>
+                  <Link href={`/contact`}>Контакти</Link>
                 </li>
               </ul>
-              <div className="social-icon d-flex align-items-center">
-                <a href="#">
-                  <i className="fab fa-facebook-f" />
-                </a>
-                <a href="#">
-                  <i className="fab fa-twitter" />
-                </a>
-                <a href="#">
-                  <i className="fab fa-youtube" />
-                </a>
-                <a href="#">
-                  <i className="fab fa-linkedin-in" />
-                </a>
-              </div>
+              {socials.length > 0 && (
+                <div className="social-icon d-flex align-items-center">
+                  {socials.map((s, i) => (
+                    <a key={i} href={s.url || "#"}>
+                      <i
+                        className={socialIcon[s.platform] || "fa-solid fa-link"}
+                      />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div id="header-sticky" className="header-2">
@@ -75,8 +82,12 @@ export default function Header2() {
                     </div>
                   </div>
                   <div className="header-button">
-                    <Link href={`/contact`} className="theme-btn">
-                      GAT A QUOTE <i className="fa-regular fa-arrow-right" />
+                    <Link
+                      href={header?.ctaHref || "/contact"}
+                      className="theme-btn"
+                    >
+                      {header?.ctaLabel || "Запитване"}{" "}
+                      <i className="fa-regular fa-arrow-right" />
                     </Link>
                   </div>
                   <div className="search-item">
