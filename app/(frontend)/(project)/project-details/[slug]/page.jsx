@@ -4,15 +4,24 @@ import Header2 from "@/components/headers/Header2";
 import ProjectDetails from "@/components/project/ProjectDetails";
 import Link from "next/link";
 import Image from "next/image";
-import { allProjects } from "@/data/projects";
-export const metadata = {
-  title: "Project Details || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
-};
+import { notFound } from "next/navigation";
+import { getProjectBySlug } from "@/lib/data";
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+  if (!project) return { title: "Проект — NATURA" };
+  return {
+    title: `${project.title} — NATURA`,
+    description: project.excerpt || undefined,
+  };
+}
+
 export default async function page({ params }) {
-  const { id } = await params;
-  const projectItem =
-    allProjects.filter((elm) => elm.id == id)[0] || allProjects[0];
+  const { slug } = await params;
+  const projectItem = await getProjectBySlug(slug);
+  if (!projectItem) notFound();
+
   return (
     <>
       <Header2 />
@@ -41,12 +50,18 @@ export default async function page({ params }) {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Project Details</li>
+                <li>
+                  <Link href={`/project`}> Проекти </Link>
+                </li>
+                <li>
+                  <i className="fa-sharp fa-solid fa-slash-forward" />
+                </li>
+                <li>{projectItem.title}</li>
               </ul>
             </div>
             <div className="breadcrumb-image">
