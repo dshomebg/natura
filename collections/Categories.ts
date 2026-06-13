@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { slugField } from '@/utils/slug'
+import { slugField } from '../utils/slug'
 
 // Shared categories for blog posts and projects.
 export const Categories: CollectionConfig = {

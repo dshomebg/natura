@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { slugField } from '@/utils/slug'
+import { slugField } from '../utils/slug'
 
 // Services: construction, renovation, architecture, etc.
 export const Services: CollectionConfig = {

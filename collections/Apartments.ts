@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { slugField } from '@/utils/slug'
+import { slugField } from '../utils/slug'
 
 // Apartments for sale — catalog with inquiry (no online payment).
 export const Apartments: CollectionConfig = {
