@@ -8,6 +8,20 @@ import { usePathname } from "next/navigation";
 import SearchWrap from "@/components/common/SearchWrap";
 import { ToastContainer } from "react-toastify";
 
+// Vendor stylesheets served statically from /public/assets/css.
+// Order matters for the cascade — kept identical to the original template.
+const vendorStyles = [
+  "/assets/css/bootstrap.min.css",
+  "/assets/css/all.min.css",
+  "/assets/css/animate.css",
+  "/assets/css/splitting.css",
+  "/assets/css/magnific-popup.css",
+  "/assets/css/meanmenu.css",
+  "/assets/css/swiper-bundle.min.css",
+  "/assets/css/nice-select.css",
+  "/assets/css/color.css",
+];
+
 export default function RootLayout({ children }) {
   const path = usePathname();
   useEffect(() => {
@@ -40,7 +54,12 @@ export default function RootLayout({ children }) {
   }, [path]);
 
   return (
-    <html lang="en">
+    <html lang="bg">
+      <head>
+        {vendorStyles.map((href) => (
+          <link key={href} rel="stylesheet" href={href} precedence="vendor" />
+        ))}
+      </head>
       <body>
         <ToastContainer
           position="top-right"

@@ -9,9 +9,10 @@ export const metadata = {
   title: "Blog Details || Xbuild - Constriction nextjs Template",
   description: "Xbuild - Constriction nextjs Template",
 };
-export default function page({ params }) {
+export default async function page({ params }) {
+  const { id } = await params;
   const newsItem =
-    allNews.filter((elm) => elm.id == params.id)[0] || allNews[0];
+    allNews.filter((elm) => elm.id == id)[0] || allNews[0];
   return (
     <>
       <Header2 />
