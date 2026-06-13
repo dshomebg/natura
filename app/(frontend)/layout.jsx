@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import "../public/assets/scss/styles.scss";
+import "@/public/assets/scss/styles.scss";
 import BackToTop from "@/components/common/BackToTop";
 import Mouse from "@/components/common/Mouse";
 import { usePathname } from "next/navigation";
