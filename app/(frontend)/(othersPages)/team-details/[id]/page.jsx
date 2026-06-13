@@ -4,15 +4,19 @@ import Header2 from "@/components/headers/Header2";
 import TeamDetails from "@/components/team/TeamDetails";
 import Link from "next/link";
 import Image from "next/image";
-import { allTeammembers } from "@/data/team";
-export const metadata = {
-  title: "Team Details || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
-};
+import { notFound } from "next/navigation";
+import { getTeamMemberById } from "@/lib/data";
+
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const member = await getTeamMemberById(id);
+  return { title: member ? `${member.name} — NATURA` : "Екип — NATURA" };
+}
+
 export default async function page({ params }) {
   const { id } = await params;
-  const teamMember =
-    allTeammembers.filter((elm) => elm.id == id)[0] || allTeammembers[0];
+  const teamMember = await getTeamMemberById(id);
+  if (!teamMember) notFound();
   return (
     <>
       <Header2 />

@@ -81,6 +81,17 @@ export const getPostBySlug = async (slug: string) => {
   return docs[0] ?? null
 }
 
+export const getCategories = async (type?: 'blog' | 'project') => {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'categories',
+    depth: 0,
+    where: type ? { type: { equals: type } } : {},
+    limit: 100,
+  })
+  return docs
+}
+
 export const getServices = async () => {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({
@@ -101,6 +112,15 @@ export const getTeam = async () => {
     limit: 100,
   })
   return docs
+}
+
+export const getTeamMemberById = async (id: string | number) => {
+  const payload = await getPayloadClient()
+  try {
+    return await payload.findByID({ collection: 'team', id, depth: 1 })
+  } catch {
+    return null
+  }
 }
 
 export const getSiteSettings = async () => {

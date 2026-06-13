@@ -1,18 +1,25 @@
-import BlogDetails from "@/components/blogs/BlogDetails";
 import Brands from "@/components/common/Brands";
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
-import { allNews } from "@/data/blogs";
+import ServiceDetails from "@/components/service/ServiceDetails";
 import Image from "next/image";
 import Link from "next/link";
-export const metadata = {
-  title: "Blog Details || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
-};
+import { notFound } from "next/navigation";
+import { getServices } from "@/lib/data";
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const services = await getServices();
+  const service = services.find((s) => s.slug === slug);
+  return { title: service ? `${service.title} — NATURA` : "Услуга — NATURA" };
+}
+
 export default async function page({ params }) {
-  const { id } = await params;
-  const newsItem =
-    allNews.filter((elm) => elm.id == id)[0] || allNews[0];
+  const { slug } = await params;
+  const services = await getServices();
+  const serviceItem = services.find((s) => s.slug === slug);
+  if (!serviceItem) notFound();
+
   return (
     <>
       <Header2 />
@@ -33,7 +40,7 @@ export default async function page({ params }) {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  {newsItem.title}
+                  {serviceItem.title}
                 </h1>
               </div>
               <ul
@@ -41,12 +48,18 @@ export default async function page({ params }) {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Blogs Details</li>
+                <li>
+                  <Link href={`/service`}> Услуги </Link>
+                </li>
+                <li>
+                  <i className="fa-sharp fa-solid fa-slash-forward" />
+                </li>
+                <li>{serviceItem.title}</li>
               </ul>
             </div>
             <div className="breadcrumb-image">
@@ -69,7 +82,7 @@ export default async function page({ params }) {
           </div>
         </div>
       </div>
-      <BlogDetails newsItem={newsItem} />
+      <ServiceDetails serviceItem={serviceItem} services={services} />
       <div className="brand-section fix section-padding pt-0">
         <Brands />
       </div>

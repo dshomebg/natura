@@ -1,18 +1,30 @@
+import BlogDetails from "@/components/blogs/BlogDetails";
 import Brands from "@/components/common/Brands";
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
-import ServiceDetails from "@/components/service/ServiceDetails";
-import { allServices } from "@/data/services";
 import Image from "next/image";
 import Link from "next/link";
-export const metadata = {
-  title: "Service Details || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
-};
+import { notFound } from "next/navigation";
+import { getPostBySlug, getPosts, getCategories } from "@/lib/data";
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+  if (!post) return { title: "Публикация — NATURA" };
+  return {
+    title: `${post.title} — NATURA`,
+    description: post.excerpt || undefined,
+  };
+}
+
 export default async function page({ params }) {
-  const { id } = await params;
-  const serviceItem =
-    allServices.filter((elm) => elm.id == id)[0] || allServices[0];
+  const { slug } = await params;
+  const newsItem = await getPostBySlug(slug);
+  if (!newsItem) notFound();
+
+  const recent = (await getPosts(4)).filter((p) => p.slug !== slug).slice(0, 3);
+  const categories = await getCategories("blog");
+
   return (
     <>
       <Header2 />
@@ -33,7 +45,7 @@ export default async function page({ params }) {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  {serviceItem.title}
+                  {newsItem.title}
                 </h1>
               </div>
               <ul
@@ -41,12 +53,18 @@ export default async function page({ params }) {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Service Details</li>
+                <li>
+                  <Link href={`/news`}> Блог </Link>
+                </li>
+                <li>
+                  <i className="fa-sharp fa-solid fa-slash-forward" />
+                </li>
+                <li>{newsItem.title}</li>
               </ul>
             </div>
             <div className="breadcrumb-image">
@@ -69,7 +87,7 @@ export default async function page({ params }) {
           </div>
         </div>
       </div>
-      <ServiceDetails serviceItem={serviceItem} />
+      <BlogDetails newsItem={newsItem} recent={recent} categories={categories} />
       <div className="brand-section fix section-padding pt-0">
         <Brands />
       </div>

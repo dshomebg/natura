@@ -4,11 +4,18 @@ import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import Image from "next/image";
 import Link from "next/link";
+import { getPosts, getCategories } from "@/lib/data";
+
 export const metadata = {
-  title: "Blog Standard || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
+  title: "Блог — NATURA",
+  description: "Новини и статии от NATURA.",
 };
-export default function page() {
+
+export default async function page() {
+  const posts = await getPosts();
+  const categories = await getCategories("blog");
+  const recent = posts.slice(0, 3);
+
   return (
     <>
       <Header2 />
@@ -29,7 +36,7 @@ export default function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Blogs Standard
+                  Блог
                 </h1>
               </div>
               <ul
@@ -37,12 +44,12 @@ export default function page() {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Blogs Standard</li>
+                <li>Блог</li>
               </ul>
             </div>
             <div className="breadcrumb-image">
@@ -65,7 +72,7 @@ export default function page() {
           </div>
         </div>
       </div>
-      <Blogs2 />
+      <Blogs2 posts={posts} recent={recent} categories={categories} />
       <div className="brand-section fix section-padding pt-0">
         <Brands />
       </div>
