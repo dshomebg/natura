@@ -1,9 +1,22 @@
-import { newsImageItems, newsItems } from "@/data/blogs";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AnimatedText from "@/components/common/AnimatedText";
-export default function Blogs() {
+import { mediaUrl, mediaAlt } from "@/lib/media";
+
+const fmtDate = (d) =>
+  d
+    ? new Date(d).toLocaleDateString("bg-BG", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    : "";
+
+export default function Blogs({ posts = [] }) {
+  const featured = posts[0];
+  const list = posts.slice(1, 4);
+
   return (
     <section
       id="blog"
@@ -29,88 +42,89 @@ export default function Blogs() {
         <div className="section-title text-center">
           <h6 className="wow fadeInUp">
             <i className="fa-regular fa-arrow-left-long" />
-            Blog &amp; News
+            Блог и новини
             <i className="fa-regular fa-arrow-right-long" />
           </h6>
           <h2 className="splt-txt wow">
-            <AnimatedText text="Latest News & Blog" />
+            <AnimatedText text="Последни новини и статии" />
           </h2>
         </div>
         <div className="row">
-          <div className="col-lg-6 wow fadeInUp" data-wow-delay=".2s">
-            {newsImageItems.map((item) => (
+          {featured && (
+            <div className="col-lg-6 wow fadeInUp" data-wow-delay=".2s">
               <div
-                key={item.id}
                 className="news-image-items bg-cover"
-                style={{ backgroundImage: `url("${item.backgroundImage}")` }}
+                style={{
+                  backgroundImage: `url("${mediaUrl(featured.cover, "feature")}")`,
+                }}
               >
                 <div className="news-content">
                   <ul>
                     <li>
-                      <i className="fa-regular fa-user" />
-                      {item.author}
+                      <i className="fa-solid fa-calendar-days" />
+                      {fmtDate(featured.publishedDate)}
                     </li>
-                    <li>
-                      <i className="fa-solid fa-tag" />
-                      {item.category}
-                    </li>
+                    {featured.category &&
+                      typeof featured.category === "object" && (
+                        <li>
+                          <i className="fa-solid fa-tag" />
+                          {featured.category.name}
+                        </li>
+                      )}
                   </ul>
                   <h3>
-                    <Link href={`/news-details/${item.id}`}>
-                      {item.title.split("<br />").map((line, index) => (
-                        <React.Fragment key={index}>
-                          {line}
-                          <br />
-                        </React.Fragment>
-                      ))}
+                    <Link href={`/news-details/${featured.slug}`}>
+                      {featured.title}
                     </Link>
                   </h3>
-                  <p className="text-white">{item.description}</p>
+                  {featured.excerpt && (
+                    <p className="text-white">{featured.excerpt}</p>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
           <div className="col-lg-6">
             <div className="news-right-items">
-              {newsItems.map((item) => (
+              {list.map((item) => (
                 <div
                   key={item.id}
                   className="news-card-items wow fadeInUp"
-                  data-wow-delay={item.delay}
+                  data-wow-delay=".3s"
                 >
                   <div className="news-content">
                     <ul>
                       <li>
-                        <i className="fa-regular fa-user" />
-                        {item.author}
+                        <i className="fa-solid fa-calendar-days" />
+                        {fmtDate(item.publishedDate)}
                       </li>
-                      <li>
-                        <i className="fa-solid fa-tag" />
-                        {item.category}
-                      </li>
+                      {item.category && typeof item.category === "object" && (
+                        <li>
+                          <i className="fa-solid fa-tag" />
+                          {item.category.name}
+                        </li>
+                      )}
                     </ul>
                     <h4>
-                      <Link href={`/news-details/${item.id}`}>
+                      <Link href={`/news-details/${item.slug}`}>
                         {item.title}
                       </Link>
                     </h4>
-                    <p>
-                      Pellentesque vitae consectetur ante <br />
-                      Integer non eros...
-                    </p>
+                    {item.excerpt && <p>{item.excerpt}</p>}
                     <Link
-                      href={`/news-details/${item.id}`}
+                      href={`/news-details/${item.slug}`}
                       className="link-btn"
                     >
-                      Read More <i className="fa-regular fa-arrow-right-long" />
+                      Прочети повече{" "}
+                      <i className="fa-regular fa-arrow-right-long" />
                     </Link>
                   </div>
                   <div className="news-image">
                     <Image
-                      src={item.imgSrc}
+                      src={mediaUrl(item.cover, "thumbnail")}
                       width={247}
                       height={258}
-                      alt="img"
+                      alt={mediaAlt(item.cover, item.title)}
                     />
                   </div>
                 </div>

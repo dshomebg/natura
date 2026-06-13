@@ -1,9 +1,11 @@
-import { teamMembers } from "@/data/team";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import AnimatedText from "@/components/common/AnimatedText";
-export default function Team() {
+import { mediaUrl, mediaAlt } from "@/lib/media";
+import { socialIcon } from "@/lib/socials";
+
+export default function Team({ team = [] }) {
   return (
     <section
       id="team"
@@ -14,42 +16,45 @@ export default function Team() {
         <div className="section-title text-center">
           <h6 className="wow fadeInUp">
             <i className="fa-regular fa-arrow-left-long" />
-            our team
+            нашият екип
             <i className="fa-regular fa-arrow-right-long" />
           </h6>
           <h2 className="splt-txt wow">
-            <AnimatedText text="Our Expert Team" />
-            <br />
-            <AnimatedText text="Members" />
+            <AnimatedText text="Нашият експертен екип" />
           </h2>
         </div>
         <div className="row">
-          {teamMembers.map((member) => (
+          {team.map((member, idx) => (
             <div
               key={member.id}
               className="col-xl-3 col-lg-4 col-md-6 wow fadeInUp"
-              data-wow-delay={member.delay}
+              data-wow-delay={`${0.2 * ((idx % 4) + 1)}s`}
             >
-              <div
-                className={`team-card-items ${member.active ? "active" : ""}`}
-              >
+              <div className={`team-card-items ${idx === 1 ? "active" : ""}`}>
                 <div className="team-image">
                   <Image
-                    src={member.image}
+                    src={mediaUrl(member.photo, "card")}
                     width={238}
                     height={294}
-                    alt="img"
+                    alt={mediaAlt(member.photo, member.name)}
                   />
-                  <div className="social-icon d-flex align-items-center">
-                    {member.socials.map((link, index) => (
-                      <a key={index} href={link.href}>
-                        <i className={link.iconClass} />
-                      </a>
-                    ))}
-                  </div>
+                  {Array.isArray(member.socials) &&
+                    member.socials.length > 0 && (
+                      <div className="social-icon d-flex align-items-center">
+                        {member.socials.map((link, index) => (
+                          <a key={index} href={link.url || "#"}>
+                            <i
+                              className={
+                                socialIcon[link.platform] || "fa-solid fa-link"
+                              }
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    )}
                 </div>
                 <div className="team-content">
-                  <span>{member.role}</span>
+                  {member.position && <span>{member.position}</span>}
                   <h3>
                     <Link href={`/team-details/${member.id}`}>
                       {member.name}

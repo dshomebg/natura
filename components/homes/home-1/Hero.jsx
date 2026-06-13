@@ -6,7 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import ModalVideo from "react-modal-video";
 import { useState } from "react";
-export default function Hero() {
+import { mediaUrl } from "@/lib/media";
+export default function Hero({ hero }) {
   const [isOpen, setOpen] = useState(false);
   const swiperOptions = {
     spaceBetween: 30,
@@ -39,13 +40,10 @@ export default function Hero() {
       },
     },
   };
-  const images = [
-    "/assets/img/hero/01.jpg",
-    "/assets/img/hero/02.jpg",
-    "/assets/img/hero/01.jpg",
-    "/assets/img/hero/02.jpg",
-    // Add more image paths as needed
-  ];
+  const images =
+    hero?.heroImage && typeof hero.heroImage === "object"
+      ? [mediaUrl(hero.heroImage, "feature")]
+      : ["/assets/img/hero/01.jpg", "/assets/img/hero/02.jpg"];
   return (
     <>
       <section className="hero-section hero-1 fix section-padding">
@@ -78,21 +76,22 @@ export default function Hero() {
                   />
                 </div>
                 <h1 className="splt-txt wow">
-                  <AnimatedText text="Create the" />
-                  <br /> <AnimatedText text="building you" />
-                  <br /> <AnimatedText text="want here" />
+                  <AnimatedText
+                    text={hero?.heroTitle || "Изграждаме бъдещето"}
+                  />
                 </h1>
-                <p className="wow fadeInUp" data-wow-delay=".5s">
-                  Proactively pontificate client-centered relationships visavis
-                  process centric leadership skills. Credibly.
-                </p>
+                {hero?.heroSubtitle && (
+                  <p className="wow fadeInUp" data-wow-delay=".5s">
+                    {hero.heroSubtitle}
+                  </p>
+                )}
                 <div className="hero-button">
                   <Link
-                    href={`/about`}
+                    href={hero?.heroCtaHref || "/project"}
                     className="theme-btn bg-white wow fadeInUp"
                     data-wow-delay=".3s"
                   >
-                    Explore More
+                    {hero?.heroCtaLabel || "Разгледай"}
                     <i className="fa-regular fa-arrow-right"></i>
                   </Link>
                   <span

@@ -1,11 +1,11 @@
 "use client";
-import { serviceItems } from "@/data/services";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import AnimatedText from "@/components/common/AnimatedText";
 import Link from "next/link";
 import Image from "next/image";
-export default function Services() {
+import { mediaUrl, mediaAlt } from "@/lib/media";
+export default function Services({ services = [] }) {
   const swiperOptions = {
     spaceBetween: 30,
     speed: 2000,
@@ -57,9 +57,9 @@ export default function Services() {
             <i className="fa-regular fa-arrow-right-long"></i>
           </h6>
           <h2 className="text-white splt-txt wow">
-            <AnimatedText text="Create The Building " />
+            <AnimatedText text="Изграждаме сградата," />
             <br />
-            <AnimatedText text="You Want Here" />
+            <AnimatedText text="която искате" />
           </h2>
         </div>
         <div className="array-button">
@@ -73,33 +73,32 @@ export default function Services() {
       </div>
       <div className="container-fluid">
         <Swiper {...swiperOptions} className="swiper service-slider">
-          {serviceItems.map((item, index) => (
-            <SwiperSlide className="swiper-slide" key={index}>
+          {services.map((item, index) => (
+            <SwiperSlide className="swiper-slide" key={item.id || index}>
               <div className="service-box-items">
                 <div className="service-thumb">
-                  <Image src={item.imgSrc} width={346} height={236} alt="img" />
-                  <div className="icon">
-                    <Image
-                      src={item.iconSrc}
-                      width={32}
-                      height={32}
-                      alt="img"
-                    />
-                  </div>
+                  <Image
+                    src={mediaUrl(item.icon, "card")}
+                    width={346}
+                    height={236}
+                    alt={mediaAlt(item.icon, item.title)}
+                  />
                 </div>
                 <div className="service-content">
-                  <h2 className="number">{item.number}</h2>
+                  <h2 className="number">
+                    {String(index + 1).padStart(2, "0")}
+                  </h2>
                   <h3>
-                    <Link href={`/service-details/${item.id}`}>
+                    <Link href={`/service-details/${item.slug}`}>
                       {item.title}
                     </Link>
                   </h3>
-                  <p>{item.description}</p>
+                  {item.excerpt && <p>{item.excerpt}</p>}
                   <Link
-                    href={`/service-details/${item.id}`}
+                    href={`/service-details/${item.slug}`}
                     className="link-btn"
                   >
-                    Explore More <i className="fa-solid fa-arrow-right"></i>
+                    Научи повече <i className="fa-solid fa-arrow-right"></i>
                   </Link>
                 </div>
               </div>

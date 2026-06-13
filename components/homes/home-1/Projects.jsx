@@ -1,16 +1,18 @@
 "use client";
 import Link from "next/link";
 import AnimatedText from "@/components/common/AnimatedText";
-import { projects2 } from "@/data/projects";
 import { useRef } from "react";
-export default function Projects() {
+
+const bgClasses = ["", "bg-1", "bg-2", "bg-3", "bg-4"];
+
+export default function Projects({ projects = [] }) {
   const parentRefs = useRef([]);
   const handleProjectHover = (index) => {
-    parentRefs.current.forEach((el) => {
-      el.classList.remove("active");
-    });
-    parentRefs.current[index].classList.add("active");
+    parentRefs.current.forEach((el) => el && el.classList.remove("active"));
+    if (parentRefs.current[index])
+      parentRefs.current[index].classList.add("active");
   };
+
   return (
     <section
       id="projects"
@@ -20,30 +22,34 @@ export default function Projects() {
         <div className="section-title text-center">
           <h6 className="wow fadeInUp">
             <i className="fa-regular fa-arrow-left-long" />
-            our complete projects
+            нашите проекти
             <i className="fa-regular fa-arrow-right-long" />
           </h6>
           <h2 className="splt-txt wow">
-            <AnimatedText text="Our Latest Projects" />
+            <AnimatedText text="Нашите последни проекти" />
           </h2>
         </div>
       </div>
       <div className="container-fluid">
         <div className="project-wrapper">
           <div className="main-box">
-            {projects2.map((elm, i) => (
+            {projects.map((elm, i) => (
               <div
                 onMouseOver={() => handleProjectHover(i)}
                 ref={(el) => (parentRefs.current[i] = el)}
-                key={i}
-                className={`box wow fadeInUp ${elm.bgClass} `}
-                data-wow-delay={elm.delay}
+                key={elm.id || i}
+                className={`box wow fadeInUp ${bgClasses[i % bgClasses.length]} ${
+                  i === 2 ? "active" : ""
+                }`}
+                data-wow-delay={`${0.2 * ((i % 4) + 1)}s`}
               >
                 <div className="project-content">
                   <h3>
-                    <Link href={`/project-details/${elm.id}`}>{elm.title}</Link>
+                    <Link href={`/project-details/${elm.slug}`}>
+                      {elm.title}
+                    </Link>
                   </h3>
-                  <Link href={`/project-details/${elm.id}`} className="icon">
+                  <Link href={`/project-details/${elm.slug}`} className="icon">
                     <i className="fa-solid fa-arrow-right" />
                   </Link>
                 </div>
