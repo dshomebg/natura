@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -23,7 +24,26 @@ import { HomePage } from './globals/HomePage'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+// Configure SMTP only when env vars are present; otherwise Payload falls back
+// to logging emails to the console (fine for local development).
+const email = process.env.SMTP_HOST
+  ? nodemailerAdapter({
+      defaultFromName: process.env.SMTP_FROM_NAME || 'NATURA',
+      defaultFromAddress: process.env.SMTP_FROM || 'no-reply@natura.bg',
+      transportOptions: {
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT || 587),
+        secure: process.env.SMTP_SECURE === 'true',
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      },
+    })
+  : undefined
+
 export default buildConfig({
+  email,
   admin: {
     user: Users.slug,
     importMap: {

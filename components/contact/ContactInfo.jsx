@@ -1,18 +1,23 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import AnimatedText from "@/components/common/AnimatedText";
+import { useSiteData } from "@/lib/SiteContext";
+
 export default function ContactInfo() {
+  const { settings } = useSiteData();
+
   return (
     <section className="contact-info-section fix section-padding">
       <div className="container">
         <div className="section-title text-center">
           <h6 className="wow fadeInUp">
             <i className="fa-regular fa-arrow-left-long" />
-            CONTACT US
+            КОНТАКТИ
             <i className="fa-regular fa-arrow-right-long" />
           </h6>
           <h2 className="splt-txt wow">
-            <AnimatedText text="Our Contact Information" />
+            <AnimatedText text="Нашата контактна информация" />
           </h2>
         </div>
         <div className="row">
@@ -30,12 +35,8 @@ export default function ContactInfo() {
                 />
               </div>
               <div className="content">
-                <h3>Our Address</h3>
-                <p>
-                  2715 Ash Dr. San Jose,
-                  <br />
-                  South Dakota 83475
-                </p>
+                <h3>Адрес</h3>
+                <p>{settings?.address || "—"}</p>
               </div>
             </div>
           </div>
@@ -53,11 +54,23 @@ export default function ContactInfo() {
                 />
               </div>
               <div className="content">
-                <h3>Email Address</h3>
+                <h3>Телефон и имейл</h3>
                 <p>
-                  Mobile :<a href="tel:984756123695">9847 5612 3695</a> <br />
-                  Email :
-                  <a href="mailto:example@gmail.com">example@gmail.com</a>
+                  {settings?.phone && (
+                    <>
+                      Тел.:{" "}
+                      <a href={`tel:${settings.phone.replace(/\s+/g, "")}`}>
+                        {settings.phone}
+                      </a>
+                      <br />
+                    </>
+                  )}
+                  {settings?.email && (
+                    <>
+                      Имейл:{" "}
+                      <a href={`mailto:${settings.email}`}>{settings.email}</a>
+                    </>
+                  )}
                 </p>
               </div>
             </div>
@@ -76,11 +89,8 @@ export default function ContactInfo() {
                 />
               </div>
               <div className="content">
-                <h3>Hours of Operation</h3>
-                <p>
-                  Monday-Saturday : 8:00 - <br />
-                  9:00 Sunday : Closed
-                </p>
+                <h3>Работно време</h3>
+                <p>{settings?.workingHours || "Пон–Пет: 9:00–18:00"}</p>
               </div>
             </div>
           </div>

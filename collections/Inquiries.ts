@@ -16,6 +16,35 @@ export const Inquiries: CollectionConfig = {
     update: ({ req: { user } }) => Boolean(user),
     delete: ({ req: { user } }) => Boolean(user),
   },
+  hooks: {
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        if (operation !== 'create') return
+        try {
+          const settings = await req.payload.findGlobal({ slug: 'site-settings' })
+          const to = process.env.NOTIFY_EMAIL || settings?.email
+          if (!to) return
+          const typeLabel = doc.type === 'apartment' ? 'апартамент' : 'общо'
+          await req.payload.sendEmail({
+            to,
+            subject: `Ново запитване (${typeLabel}) от ${doc.name}`,
+            text: [
+              `Тип: ${typeLabel}`,
+              `Име: ${doc.name}`,
+              `Телефон: ${doc.phone || '-'}`,
+              `Имейл: ${doc.email || '-'}`,
+              `Апартамент (ID): ${doc.apartment || '-'}`,
+              ``,
+              `Съобщение:`,
+              `${doc.message || '-'}`,
+            ].join('\n'),
+          })
+        } catch (err) {
+          req.payload.logger.error(`Inquiry notification email failed: ${err}`)
+        }
+      },
+    ],
+  },
   fields: [
     {
       name: 'type',
