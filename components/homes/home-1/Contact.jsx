@@ -1,7 +1,46 @@
 "use client";
 import Image from "next/image";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import AnimatedText from "@/components/common/AnimatedText";
+import { useSiteData } from "@/lib/SiteContext";
+
 export default function Contact() {
+  const { settings } = useSiteData();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const update = (key) => (e) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!form.name || (!form.phone && !form.email)) {
+      toast.error("Моля попълнете име и телефон или имейл.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, type: "general" }),
+      });
+      if (!res.ok) throw new Error();
+      toast.success("Съобщението е изпратено успешно!");
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch {
+      toast.error("Възникна грешка. Моля, опитайте отново.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section
       id="contact"
@@ -22,12 +61,9 @@ export default function Contact() {
             <div className="col-lg-6">
               <div className="contact-items">
                 <h3 className="splt-txt wow">
-                  <AnimatedText text="Get in touch!" />
+                  <AnimatedText text="Свържете се с нас!" />
                 </h3>
-                <form
-                  onSubmit={(e) => e.preventDefault()}
-                  className="mt-4 mt-md-0"
-                >
+                <form onSubmit={submit} className="mt-4 mt-md-0">
                   <div className="row g-4">
                     <div
                       className="col-lg-6 col-md-6 wow fadeInUp"
@@ -36,9 +72,10 @@ export default function Contact() {
                       <div className="form-clt">
                         <input
                           type="text"
-                          name="name"
-                          id="name"
-                          placeholder="Name"
+                          placeholder="Име"
+                          value={form.name}
+                          onChange={update("name")}
+                          required
                         />
                       </div>
                     </div>
@@ -48,36 +85,23 @@ export default function Contact() {
                     >
                       <div className="form-clt">
                         <input
-                          type="text"
-                          name="email"
-                          id="email"
-                          placeholder="email"
+                          type="email"
+                          placeholder="Имейл"
+                          value={form.email}
+                          onChange={update("email")}
                         />
                       </div>
                     </div>
                     <div
-                      className="col-lg-6 col-md-6 wow fadeInUp"
+                      className="col-lg-12 wow fadeInUp"
                       data-wow-delay=".2s"
                     >
                       <div className="form-clt">
                         <input
-                          type="text"
-                          name="number"
-                          id="number"
-                          placeholder="Phone"
-                        />
-                      </div>
-                    </div>
-                    <div
-                      className="col-lg-6 col-md-6 wow fadeInUp"
-                      data-wow-delay=".4s"
-                    >
-                      <div className="form-clt">
-                        <input
-                          type="text"
-                          name="subject"
-                          id="subject"
-                          placeholder="Subject"
+                          type="tel"
+                          placeholder="Телефон"
+                          value={form.phone}
+                          onChange={update("phone")}
                         />
                       </div>
                     </div>
@@ -87,16 +111,20 @@ export default function Contact() {
                     >
                       <div className="form-clt">
                         <textarea
-                          name="message"
-                          id="message"
-                          placeholder="write message . ."
-                          defaultValue={""}
+                          placeholder="Вашето съобщение"
+                          value={form.message}
+                          onChange={update("message")}
                         />
                       </div>
                     </div>
                     <div className="col-lg-7 wow fadeInUp" data-wow-delay=".4s">
-                      <button type="submit" className="theme-btn">
-                        Send message <i className="fas fa-long-arrow-right" />
+                      <button
+                        type="submit"
+                        className="theme-btn"
+                        disabled={loading}
+                      >
+                        {loading ? "Изпращане..." : "Изпрати съобщение"}{" "}
+                        <i className="fas fa-long-arrow-right" />
                       </button>
                     </div>
                   </div>
@@ -112,29 +140,24 @@ export default function Contact() {
                     <i className="fa-regular fa-arrow-right-long" />
                   </h6>
                   <h2 className="text-white splt-txt wow">
-                    <AnimatedText text="Building With Passion Ensuring Satisfactions" />
+                    <AnimatedText text="Изграждаме със страст и грижа за всеки детайл" />
                   </h2>
                 </div>
-                <p
-                  className="text-white mt-3 mt-md-0 wow fadeInUp"
-                  data-wow-delay=".5s"
-                >
-                  It is a long established fact that a reader will be distracted
-                  the readable content of a page when looking at layout the
-                  point of using lorem the is Ipsum less normal distribution of
-                  letters.
-                </p>
-                <div className="icon-items wow fadeInUp" data-wow-delay=".3s">
-                  <div className="icon">
-                    <i className="fa-solid fa-phone-volume" />
+                {settings?.phone && (
+                  <div className="icon-items wow fadeInUp" data-wow-delay=".3s">
+                    <div className="icon">
+                      <i className="fa-solid fa-phone-volume" />
+                    </div>
+                    <div className="content">
+                      <span>Обадете се</span>
+                      <h4>
+                        <a href={`tel:${settings.phone.replace(/\s+/g, "")}`}>
+                          {settings.phone}
+                        </a>
+                      </h4>
+                    </div>
                   </div>
-                  <div className="content">
-                    <span>call emergency</span>
-                    <h4>
-                      <a href="tel:+88012365499">+88 0123 654 99</a>
-                    </h4>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

@@ -48,6 +48,18 @@ export const getApartments = async () => {
   return docs
 }
 
+export const getAvailableApartments = async (limit = 3) => {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'apartments',
+    depth: 1,
+    sort: 'price',
+    where: { status: { equals: 'available' } },
+    limit,
+  })
+  return docs
+}
+
 export const getApartmentBySlug = async (slug: string) => {
   const payload = await getPayloadClient()
   const { docs } = await payload.find({

@@ -3,6 +3,7 @@ import Footer1 from "@/components/footers/Footer1";
 import Header1 from "@/components/headers/Header1";
 import HeaderTop1 from "@/components/headers/HeaderTop1";
 import About from "@/components/homes/home-1/About";
+import Apartments from "@/components/homes/home-1/Apartments";
 import Blogs from "@/components/homes/home-1/Blogs";
 import Contact from "@/components/homes/home-1/Contact";
 import Cta from "@/components/homes/home-1/Cta";
@@ -19,6 +20,7 @@ import {
   getServices,
   getTeam,
   getPosts,
+  getAvailableApartments,
 } from "@/lib/data";
 
 export const metadata = {
@@ -28,13 +30,15 @@ export const metadata = {
 };
 
 export default async function Home1() {
-  const [homePage, projects, services, team, posts] = await Promise.all([
-    getHomePage(),
-    getProjects(),
-    getServices(),
-    getTeam(),
-    getPosts(4),
-  ]);
+  const [homePage, projects, services, team, posts, apartments] =
+    await Promise.all([
+      getHomePage(),
+      getProjects(),
+      getServices(),
+      getTeam(),
+      getPosts(4),
+      getAvailableApartments(3),
+    ]);
 
   // Section visibility from the admin (HomePage global). Sections not listed
   // in the config default to visible.
@@ -54,6 +58,7 @@ export default async function Home1() {
       <Skills />
       {show("testimonials") && <Testimonials />}
       {show("projects") && <Projects projects={projects} />}
+      {show("apartments") && <Apartments apartments={apartments} />}
       <Faq />
       {show("team") && <Team team={team} />}
       {show("contact") && <Contact />}
