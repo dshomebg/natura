@@ -1,11 +1,12 @@
 # Production stack for NATURA: app (Next.js + Payload) + PostgreSQL.
-# Usage on the server:
-#   cp .env.prod.example .env.prod   # then fill in real values
-#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+#
+# The app image is built LOCALLY and shipped to the server as a tar
+# (see deploy-prod.ps1) — the server never builds. Postgres is pulled on the
+# server. Compose auto-reads the server's `.env` for the ${...} values.
 #
 # The app binds to 127.0.0.1:3100 only — the host nginx reverse-proxies the
-# public domain to it (see deploy/nginx/natura.conf). Postgres is NOT exposed
-# to the host; the app reaches it over the compose network as `db:5432`.
+# public domain (deploy/nginx/natura.conf). Postgres is internal to the compose
+# network (db:5432), so it does NOT clash with the dshome-postgres on 5432.
 
 name: natura-prod
 
@@ -27,9 +28,12 @@ services:
       retries: 5
 
   app:
+    image: natura-prod-app:latest
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-https://www.natura-bg.com}
     container_name: natura-prod-app
     restart: unless-stopped
     depends_on:
@@ -45,7 +49,7 @@ services:
       SMTP_SECURE: ${SMTP_SECURE:-false}
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASS: ${SMTP_PASS:-}
-      SMTP_FROM: ${SMTP_FROM:-no-reply@natura.bg}
+      SMTP_FROM: ${SMTP_FROM:-no-reply@natura-bg.com}
       SMTP_FROM_NAME: ${SMTP_FROM_NAME:-NATURA}
     volumes:
       - natura-prod-media:/app/media

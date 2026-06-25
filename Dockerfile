@@ -13,6 +13,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Public site URL is baked into the build (canonical/OG/metadata).
+ARG NEXT_PUBLIC_SERVER_URL=https://www.natura-bg.com
+ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
 # Dummy values so payload.config evaluates at build time. Pages are
 # force-dynamic, so no real DB connection is made during the build.
 ENV PAYLOAD_SECRET=build-time-placeholder

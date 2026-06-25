@@ -1,50 +1,49 @@
 # Деплой на NATURA
 
-Продукционен стек: **app** (Next.js + Payload, standalone) + **PostgreSQL**,
-зад **nginx** reverse proxy с SSL.
+Подходът следва този на DSHome: **образът се билдва ЛОКАЛНО** (на този компютър),
+праща се към сървъра като `.tar`, зарежда се и се пуска. Сървърът **не билдва** —
+така има по-малко изненади.
 
-## 1. На сървъра
+- Сървър: `root@78.46.93.85`, директория `/opt/natura`
+- Домейн: **https://www.natura-bg.com**
+- App върви на `127.0.0.1:3100` зад nginx; Postgres е само в compose мрежата
+  (`db:5432`) — не се бие с `dshome-postgres` на 5432.
+
+## Първоначална настройка (веднъж, на сървъра)
 ```bash
-git clone https://github.com/dshomebg/natura.git
-cd natura
-cp .env.prod.example .env.prod      # попълни реалните стойности
+ssh root@78.46.93.85
+mkdir -p /opt/natura && cd /opt/natura
+# създай .env с реалните стойности (compose го чете автоматично):
+nano .env            # копирай от .env.prod.example на този компютър и попълни
 ```
-Генерирай силен `PAYLOAD_SECRET`:
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-Задай `NEXT_PUBLIC_SERVER_URL=https://твоя-домейн` и DB паролата.
+В `.env` задължително:
+- силен `PAYLOAD_SECRET` — `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- силна `POSTGRES_PASSWORD`
+- `NEXT_PUBLIC_SERVER_URL=https://www.natura-bg.com`
+- (по избор) `SMTP_*` за реални имейли
 
-## 2. Старт на контейнерите
+nginx + SSL (веднъж):
 ```bash
-docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
-```
-- App слуша само на `127.0.0.1:3100` (не е публичен).
-- Postgres е само в compose мрежата (`db:5432`), не е изложен към хоста —
-  не се бие с `dshome-postgres` на 5432.
-- Качените файлове се пазят във volume `natura-prod-media`.
-
-Първи админ потребител: отвори `https://домейн/admin` и регистрирай.
-(Или копирай съществуващата база.)
-
-## 3. nginx + SSL
-```bash
-sudo cp deploy/nginx/natura.conf /etc/nginx/sites-available/natura.conf
-# смени server_name с реалния домейн
+# копирай deploy/nginx/natura.conf в /etc/nginx/sites-available/ и активирай
+sudo cp natura.conf /etc/nginx/sites-available/natura.conf
 sudo ln -s /etc/nginx/sites-available/natura.conf /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d твоя-домейн -d www.твоя-домейн
+sudo certbot --nginx -d natura-bg.com -d www.natura-bg.com
 ```
 
-## 4. Обновяване
-```bash
-git pull
-docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+## Деплой (от този компютър)
+```powershell
+.\deploy-prod.ps1
 ```
+Скриптът: тества SSH → билдва `natura-prod-app:latest` локално → `docker save` →
+`scp` към сървъра → `docker load` → `docker compose up -d --no-build`.
+
+## Първи админ потребител
+След първия деплой отвори `https://www.natura-bg.com/admin` и регистрирай
+първия потребител (или мигрирай съществуващата база).
 
 ## Бележки
-- Схемата се синхронизира автоматично (Payload push) при старт. За по-строг
-  контрол в прод може да минеш на миграции (`payload migrate`).
-- Имейл нотификации: попълни `SMTP_*` в `.env.prod`. Без тях запитванията само
-  се логват.
-- Бекъп: периодично `docker exec natura-prod-db pg_dump ...` + volume-а с медия.
+- Схемата се синхронизира автоматично (Payload push) при старт.
+- Бекъп: периодично `docker exec natura-prod-db pg_dump -U <user> <db> > backup.sql`
+  + volume-а `natura-prod-media` (качените файлове).
+- Обновяване = просто пусни пак `.\deploy-prod.ps1`.
