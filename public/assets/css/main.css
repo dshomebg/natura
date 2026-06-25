@@ -11,8 +11,8 @@ Version: 1.0.0
   --body: #fff;
   --black: #000;
   --white: #fff;
-  --theme: #f55b1f;
-  --theme2: #f55b1f;
+  --theme: #abce3c;
+  --theme2: #abce3c;
   --header: #121315;
   --text: #666666;
   --border: #d4dced;
@@ -925,7 +925,7 @@ span {
 .contact-wrapper .contact-items .form-clt input,
 .contact-wrapper .contact-items .form-clt textarea {
   border: 1px solid var(--theme);
-  background: rgba(245, 91, 31, 0.1);
+  background: rgba(171, 206, 60, 0.1);
   color: var(--theme);
   padding: 16px 20px;
   line-height: 1;
@@ -6027,7 +6027,7 @@ input.main-search-input::placeholder {
   top: -50px;
 }
 .service-box-items .service-content .number:hover {
-  -webkit-text-stroke: 1px rgba(245, 91, 31, 0.5);
+  -webkit-text-stroke: 1px rgba(171, 206, 60, 0.5);
 }
 .service-box-items .service-content h3 {
   margin-bottom: 15px;
@@ -6041,7 +6041,7 @@ input.main-search-input::placeholder {
   margin-bottom: 20px;
 }
 .service-box-items:hover .service-content .number {
-  -webkit-text-stroke: 1px rgba(245, 91, 31, 0.5);
+  -webkit-text-stroke: 1px rgba(171, 206, 60, 0.5);
 }
 
 .service-card-items {
@@ -6111,7 +6111,7 @@ input.main-search-input::placeholder {
   height: 100%;
   content: "";
   opacity: 0.75;
-  background: linear-gradient(180deg, #f55b1f 0%, #f55b1f 100%);
+  background: linear-gradient(180deg, #abce3c 0%, #abce3c 100%);
 }
 .service-card-items .service-image img {
   width: 100%;
@@ -6215,7 +6215,7 @@ input.main-search-input::placeholder {
 }
 .team-card-items .team-image {
   padding: 20px;
-  background: rgba(245, 91, 31, 0.1);
+  background: rgba(171, 206, 60, 0.1);
   position: relative;
   transition: all 0.4s ease-in-out;
   overflow: hidden;

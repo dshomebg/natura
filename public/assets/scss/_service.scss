@@ -171,7 +171,7 @@
             top: -50px;
 
             &:hover {
-                -webkit-text-stroke: 1px rgba(245, 91, 31, 0.5);
+                -webkit-text-stroke: 1px rgba(171, 206, 60, 0.5);
             }
        }
 
@@ -195,7 +195,7 @@
     &:hover {
         .service-content {
             .number {
-                -webkit-text-stroke: 1px rgba(245, 91, 31, 0.5);
+                -webkit-text-stroke: 1px rgba(171, 206, 60, 0.5);
            }
         }
     }
@@ -267,7 +267,7 @@
         &::before {
             @include before;
             opacity: 0.75;
-            background: linear-gradient(180deg, #F55B1F 0%, #F55B1F 100%);
+            background: linear-gradient(180deg, #abce3c 0%, #abce3c 100%);
         }
 
         img {

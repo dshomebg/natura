@@ -76,8 +76,8 @@ export default function Testimonials() {
                             viewBox="0 0 32 32"
                             fill="none"
                           >
-                            <path d="M0 4V28L12 16V4H0Z" fill="#F55B1F" />
-                            <path d="M20 4V28L32 16V4H20Z" fill="#F55B1F" />
+                            <path d="M0 4V28L12 16V4H0Z" fill="#abce3c" />
+                            <path d="M20 4V28L32 16V4H20Z" fill="#abce3c" />
                           </svg>
                           <h4>{text}</h4>
                         </div>
