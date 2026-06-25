@@ -5,9 +5,14 @@ import Offcanvas from "./Offcanvas";
 import { openMobilemenu } from "@/utlis/toggleMobilemenu";
 import Image from "next/image";
 import { useSiteData } from "@/lib/SiteContext";
+import { mediaUrl } from "@/lib/media";
 
 export default function Header1() {
   const { settings, header } = useSiteData();
+  const logo =
+    settings?.logo && typeof settings.logo === "object"
+      ? mediaUrl(settings.logo)
+      : "/assets/img/logo/black-logo.svg";
   return (
     <>
       <header className="header-section">
@@ -16,7 +21,7 @@ export default function Header1() {
             <div className="logo-image">
               <Link href={`/`}>
                 <Image
-                  src="/assets/img/logo/black-logo.svg"
+                  src={logo}
                   width={149}
                   height={64}
                   alt="img"
@@ -82,7 +87,7 @@ export default function Header1() {
                     <div className="logo">
                       <Link href={`/`} className="header-logo">
                         <Image
-                          src="/assets/img/logo/black-logo.svg"
+                          src={logo}
                           alt="logo-img"
                           width={149}
                           height={64}

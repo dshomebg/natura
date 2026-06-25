@@ -3,8 +3,17 @@
 import { closeMobilemenu } from "@/utlis/toggleMobilemenu";
 import Link from "next/link";
 import Image from "next/image";
+import { useSiteData } from "@/lib/SiteContext";
+import { mediaUrl } from "@/lib/media";
+import { socialIcon } from "@/lib/socials";
 
 export default function Offcanvas({ children }) {
+  const { settings, header } = useSiteData();
+  const socials = settings?.socials || [];
+  const logo =
+    settings?.logo && typeof settings.logo === "object"
+      ? mediaUrl(settings.logo)
+      : "/assets/img/logo/black-logo.svg";
   return (
     <>
       <div className="fix-area">
@@ -15,10 +24,11 @@ export default function Offcanvas({ children }) {
                 <div className="offcanvas__logo">
                   <Link href="/">
                     <Image
-                      src="/assets/img/logo/black-logo.svg"
+                      src={logo}
                       width={149}
                       height={64}
-                      alt="logo-img"
+                      alt={settings?.siteName || "NATURA"}
+                      style={{ width: "auto", height: "auto", maxHeight: 64 }}
                     />
                   </Link>
                 </div>
@@ -31,11 +41,6 @@ export default function Offcanvas({ children }) {
                   </button>
                 </div>
               </div>
-              <p className="text d-none d-xl-block">
-                Nullam dignissim, ante scelerisque the is euismod fermentum odio
-                sem semper the is erat, a feugiat leo urna eget eros. Duis
-                Aenean a imperdiet risus.
-              </p>
               <div className="mobile-menu fix mb-3 mean-container">
                 <div className="mean-bar">
                   <a
@@ -56,71 +61,71 @@ export default function Offcanvas({ children }) {
               </div>
 
               <div className="offcanvas__contact">
-                <h4>Contact Info</h4>
+                <h4>Контакти</h4>
                 <ul>
-                  <li className="d-flex align-items-center">
-                    <div className="offcanvas__contact-icon">
-                      <i className="fal fa-map-marker-alt" />
-                    </div>
-                    <div className="offcanvas__contact-text">
-                      <a target="_blank" href="#">
-                        Main Street, Melbourne, Australia
-                      </a>
-                    </div>
-                  </li>
-                  <li className="d-flex align-items-center">
-                    <div className="offcanvas__contact-icon mr-15">
-                      <i className="fal fa-envelope" />
-                    </div>
-                    <div className="offcanvas__contact-text">
-                      <a href="mailto:info@example.com">
-                        <span className="mailto:info@example.com">
-                          info@example.com
-                        </span>
-                      </a>
-                    </div>
-                  </li>
-                  <li className="d-flex align-items-center">
-                    <div className="offcanvas__contact-icon mr-15">
-                      <i className="fal fa-clock" />
-                    </div>
-                    <div className="offcanvas__contact-text">
-                      <a target="_blank" href="#">
-                        Mod-friday, 09am -05pm
-                      </a>
-                    </div>
-                  </li>
-                  <li className="d-flex align-items-center">
-                    <div className="offcanvas__contact-icon mr-15">
-                      <i className="far fa-phone" />
-                    </div>
-                    <div className="offcanvas__contact-text">
-                      <a href="tel:+11002345909">+11002345909</a>
-                    </div>
-                  </li>
+                  {settings?.address && (
+                    <li className="d-flex align-items-center">
+                      <div className="offcanvas__contact-icon">
+                        <i className="fal fa-map-marker-alt" />
+                      </div>
+                      <div className="offcanvas__contact-text">
+                        {settings.address}
+                      </div>
+                    </li>
+                  )}
+                  {settings?.email && (
+                    <li className="d-flex align-items-center">
+                      <div className="offcanvas__contact-icon mr-15">
+                        <i className="fal fa-envelope" />
+                      </div>
+                      <div className="offcanvas__contact-text">
+                        <a href={`mailto:${settings.email}`}>{settings.email}</a>
+                      </div>
+                    </li>
+                  )}
+                  {settings?.workingHours && (
+                    <li className="d-flex align-items-center">
+                      <div className="offcanvas__contact-icon mr-15">
+                        <i className="fal fa-clock" />
+                      </div>
+                      <div className="offcanvas__contact-text">
+                        {settings.workingHours}
+                      </div>
+                    </li>
+                  )}
+                  {settings?.phone && (
+                    <li className="d-flex align-items-center">
+                      <div className="offcanvas__contact-icon mr-15">
+                        <i className="far fa-phone" />
+                      </div>
+                      <div className="offcanvas__contact-text">
+                        <a href={`tel:${settings.phone.replace(/\s+/g, "")}`}>
+                          {settings.phone}
+                        </a>
+                      </div>
+                    </li>
+                  )}
                 </ul>
                 <div className="header-button mt-4">
-                  <a href="contact.html" className="theme-btn text-center">
+                  <Link
+                    href={header?.ctaHref || "/contact"}
+                    className="theme-btn text-center"
+                  >
                     <span>
-                      Get A Quote
+                      {header?.ctaLabel || "Запитване"}
                       <i className="fa-solid fa-arrow-right-long" />
                     </span>
-                  </a>
+                  </Link>
                 </div>
-                <div className="social-icon d-flex align-items-center">
-                  <a href="#">
-                    <i className="fab fa-facebook-f" />
-                  </a>
-                  <a href="#">
-                    <i className="fab fa-twitter" />
-                  </a>
-                  <a href="#">
-                    <i className="fab fa-youtube" />
-                  </a>
-                  <a href="#">
-                    <i className="fab fa-linkedin-in" />
-                  </a>
-                </div>
+                {socials.length > 0 && (
+                  <div className="social-icon d-flex align-items-center">
+                    {socials.map((s, i) => (
+                      <a key={i} href={s.url || "#"}>
+                        <i className={socialIcon[s.platform] || "fa-solid fa-link"} />
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

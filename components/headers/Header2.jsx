@@ -6,10 +6,15 @@ import { openMobilemenu } from "@/utlis/toggleMobilemenu";
 import Image from "next/image";
 import { useSiteData } from "@/lib/SiteContext";
 import { socialIcon } from "@/lib/socials";
+import { mediaUrl } from "@/lib/media";
 
 export default function Header2() {
   const { settings, header } = useSiteData();
   const socials = settings?.socials || [];
+  const logo =
+    settings?.logo && typeof settings.logo === "object"
+      ? mediaUrl(settings.logo)
+      : "/assets/img/logo/black-logo.svg";
   return (
     <>
       <header className="header-section-2">
@@ -63,10 +68,11 @@ export default function Header2() {
                   <div className="logo">
                     <Link href={`/`} className="header-logo">
                       <Image
-                        src="/assets/img/logo/black-logo.svg"
-                        alt="logo-img"
+                        src={logo}
+                        alt={settings?.siteName || "NATURA"}
                         width={149}
                         height={64}
+                        style={{ width: "auto", height: "auto", maxHeight: 64 }}
                       />
                     </Link>
                   </div>
