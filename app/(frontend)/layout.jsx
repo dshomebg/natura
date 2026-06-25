@@ -20,10 +20,25 @@ const vendorStyles = [
   "/assets/css/color.css",
 ];
 
+// Pages read live data from Payload, so render them per-request (and so the
+// production build does not require a database connection to prerender).
+export const dynamic = "force-dynamic";
+
+const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3100";
+
 export const metadata = {
+  metadataBase: new URL(siteUrl),
   title: "NATURA — строителство, ремонти и архитектура",
   description:
     "NATURA е строителна компания с фокус върху качество, устойчивост и модерна архитектура.",
+  openGraph: {
+    type: "website",
+    locale: "bg_BG",
+    siteName: "NATURA",
+    title: "NATURA — строителство, ремонти и архитектура",
+    description:
+      "NATURA е строителна компания с фокус върху качество, устойчивост и модерна архитектура.",
+  },
 };
 
 export default async function RootLayout({ children }) {
