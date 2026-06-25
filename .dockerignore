@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.gitignore
+xbuild-factory
+media
+postgres-data
+npm-debug.log*
+.env
+.env*.local
+.env.prod
+README.md
+continue.md
+docker-compose.yml
+docker-compose.prod.yml
+deploy

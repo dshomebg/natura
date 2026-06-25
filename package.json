@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emailjs/browser": "^4.4.1",
     "@payloadcms/db-postgres": "^3.85.1",
     "@payloadcms/email-nodemailer": "^3.85.1",
     "@payloadcms/next": "^3.85.1",
