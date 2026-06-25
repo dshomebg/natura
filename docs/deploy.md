@@ -1,49 +1,64 @@
 # Деплой на NATURA
 
-Подходът следва този на DSHome: **образът се билдва ЛОКАЛНО** (на този компютър),
-праща се към сървъра като `.tar`, зарежда се и се пуска. Сървърът **не билдва** —
-така има по-малко изненади.
+Сайтът е **на живо**: https://www.natura-bg.com
 
-- Сървър: `root@78.46.93.85`, директория `/opt/natura`
-- Домейн: **https://www.natura-bg.com**
-- App върви на `127.0.0.1:3100` зад nginx; Postgres е само в compose мрежата
-  (`db:5432`) — не се бие с `dshome-postgres` на 5432.
+Подходът: образът се билдва **локално**, праща се към сървъра като `.tar`,
+зарежда се и се пуска. Сървърът **не билдва** (по-малко изненади).
 
-## Първоначална настройка (веднъж, на сървъра)
-```bash
-ssh root@78.46.93.85
-mkdir -p /opt/natura && cd /opt/natura
-# създай .env с реалните стойности (compose го чете автоматично):
-nano .env            # копирай от .env.prod.example на този компютър и попълни
-```
-В `.env` задължително:
-- силен `PAYLOAD_SECRET` — `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-- силна `POSTGRES_PASSWORD`
-- `NEXT_PUBLIC_SERVER_URL=https://www.natura-bg.com`
-- (по избор) `SMTP_*` за реални имейли
+## Среда
+- Сървър: `root@157.90.129.12` (srv.pagagal.com), SSH ключ `~/.ssh/pagagal_deploy`
+- Директория: `/opt/natura` (там стоят `.env` + `docker-compose.prod.yml`)
+- Домейн: **https://www.natura-bg.com** (зад Cloudflare; non-www → www)
+- App: контейнер `natura-prod-app` на `127.0.0.1:3100`; база `natura-prod-db`
+  (само в compose мрежата). nginx (HestiaCP) proxy-ва домейна към :3100.
 
-nginx + SSL (веднъж):
-```bash
-# копирай deploy/nginx/natura.conf в /etc/nginx/sites-available/ и активирай
-sudo cp natura.conf /etc/nginx/sites-available/natura.conf
-sudo ln -s /etc/nginx/sites-available/natura.conf /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d natura-bg.com -d www.natura-bg.com
-```
-
-## Деплой (от този компютър)
+## Рутинен деплой (след промени по кода)
+От този компютър:
 ```powershell
 .\deploy-prod.ps1
 ```
-Скриптът: тества SSH → билдва `natura-prod-app:latest` локално → `docker save` →
-`scp` към сървъра → `docker load` → `docker compose up -d --no-build`.
+Скриптът: тества SSH → билдва `natura-prod-app:latest` локално → `docker save`
+→ `scp` към сървъра → `docker load` → `docker compose up -d --no-build`.
 
-## Първи админ потребител
-След първия деплой отвори `https://www.natura-bg.com/admin` и регистрирай
-първия потребител (или мигрирай съществуващата база).
+> ⚠️ Скриптът обновява само **app образа**. Не пипа базата и не прилага
+> промени по схемата (виж по-долу).
 
-## Бележки
-- Схемата се синхронизира автоматично (Payload push) при старт.
-- Бекъп: периодично `docker exec natura-prod-db pg_dump -U <user> <db> > backup.sql`
-  + volume-а `natura-prod-media` (качените файлове).
-- Обновяване = просто пусни пак `.\deploy-prod.ps1`.
+## nginx (HestiaCP) — веднъж настроено
+Домейнът е в HestiaCP под потребител `pagagal`, със SSL (Let's Encrypt).
+Default PHP темплейтът е заменен с proxy към :3100 в:
+- `/home/pagagal/conf/web/natura-bg.com/nginx.conf` (порт 80)
+- `/home/pagagal/conf/web/natura-bg.com/nginx.ssl.conf` (порт 443)
+
+(Има бекъпи `*.bak.<timestamp>` в същата папка.) При промяна: редактирай тези
+файлове, после `nginx -t && systemctl reload nginx`.
+
+## Схема на базата (важно)
+В **продукция Payload НЕ прави auto-push** на схемата (за разлика от dev).
+Първоначалната схема + данни са прехвърлени от dev базата:
+```bash
+# локално
+docker exec natura-postgres-dev pg_dump -U natura -d natura --no-owner --no-privileges > dump.sql
+# към сървъра
+scp -i ~/.ssh/pagagal_deploy dump.sql root@157.90.129.12:/opt/natura/
+ssh -i ~/.ssh/pagagal_deploy root@157.90.129.12 \
+  "cat /opt/natura/dump.sql | docker exec -i natura-prod-db psql -U natura -d natura"
+```
+**При промяна по схемата** (нови полета/колекции) повтори горното (или премини
+към Payload миграции). Само нови таблици/колони се добавят без загуба на данни.
+
+Качените файлове (media) се пазят във volume `natura-prod-media`. При нужда се
+прехвърлят по същия начин (tar → volume).
+
+## Админ
+https://www.natura-bg.com/admin — текущият потребител дойде с прехвърлената база
+(`s.panev@gmail.com`). ⚠️ Смени паролата.
+
+## Имейли
+Попълни `SMTP_*` в `/opt/natura/.env` и рестартирай app-а, за да тръгнат реални
+имейли за запитванията (иначе само се логват).
+
+## Бекъп
+```bash
+docker exec natura-prod-db pg_dump -U natura natura > backup.sql   # база
+# + volume natura-prod-media (качените файлове)
+```

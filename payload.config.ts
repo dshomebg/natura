@@ -71,6 +71,9 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    // Auto-sync the schema on boot in production too (this project relies on
+    // push rather than migration files).
+    push: true,
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },

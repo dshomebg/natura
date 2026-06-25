@@ -6,17 +6,16 @@ $ErrorActionPreference = "Stop"
 
 # Configuration
 $REMOTE_USER  = "root"
-$REMOTE_HOST  = "SET-NATURA-SERVER-IP"   # <-- попълни IP-то на сървъра на NATURA
+$REMOTE_HOST  = "157.90.129.12"
 $REMOTE_DIR   = "/opt/natura"
-
-if ($REMOTE_HOST -eq "SET-NATURA-SERVER-IP") {
-    Write-Host "[X] Set `$REMOTE_HOST to the NATURA server IP first." -ForegroundColor Red
-    exit 1
-}
+$SSH_KEY      = "$HOME\.ssh\pagagal_deploy"
 $COMPOSE_FILE = "docker-compose.prod.yml"
 $IMAGE        = "natura-prod-app:latest"
 $TAR          = "natura-app-image.tar"
 $SITE_URL     = "https://www.natura-bg.com"
+
+$SSH  = @("-i", $SSH_KEY)
+$REMOTE = "${REMOTE_USER}@${REMOTE_HOST}"
 
 Write-Host "===================================="
 Write-Host "NATURA PRODUCTION Deployment"
@@ -27,7 +26,7 @@ Write-Host ""
 # Test SSH connection
 Write-Host "Testing SSH connection..."
 try {
-    ssh "$REMOTE_USER@$REMOTE_HOST" "echo Connected" | Out-Null
+    ssh @SSH $REMOTE "echo Connected" | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "SSH failed" }
     Write-Host "[OK] SSH connection works" -ForegroundColor Green
 } catch {
@@ -52,27 +51,27 @@ if ($LASTEXITCODE -ne 0) { throw "docker save failed" }
 # Step 3: Ensure remote dir + upload (scp -C compresses during transfer)
 Write-Host ""
 Write-Host "[3/6] Uploading image and compose file..."
-ssh "$REMOTE_USER@$REMOTE_HOST" "mkdir -p $REMOTE_DIR"
+ssh @SSH $REMOTE "mkdir -p $REMOTE_DIR"
 if ($LASTEXITCODE -ne 0) { throw "mkdir on server failed" }
 
-scp -O -C $TAR "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"
+scp @SSH -O -C $TAR "${REMOTE}:${REMOTE_DIR}/"
 if ($LASTEXITCODE -ne 0) { throw "Image upload failed" }
 Write-Host "[OK] Image uploaded" -ForegroundColor Green
 
-scp -O $COMPOSE_FILE "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"
+scp @SSH -O $COMPOSE_FILE "${REMOTE}:${REMOTE_DIR}/"
 if ($LASTEXITCODE -ne 0) { throw "Compose upload failed" }
 Write-Host "[OK] Compose uploaded" -ForegroundColor Green
 
 # Step 4: Load image on the server
 Write-Host ""
 Write-Host "[4/6] Loading image on server..."
-ssh "$REMOTE_USER@$REMOTE_HOST" "cd $REMOTE_DIR && docker load -i $TAR && rm -f $TAR"
+ssh @SSH $REMOTE "cd $REMOTE_DIR && docker load -i $TAR && rm -f $TAR"
 if ($LASTEXITCODE -ne 0) { throw "docker load failed" }
 
 # Step 5: Deploy (reads /opt/natura/.env automatically)
 Write-Host ""
 Write-Host "[5/6] Deploying with Docker Compose..."
-ssh "$REMOTE_USER@$REMOTE_HOST" "cd $REMOTE_DIR && docker compose -f $COMPOSE_FILE up -d --no-build && docker image prune -f"
+ssh @SSH $REMOTE "cd $REMOTE_DIR && docker compose -f $COMPOSE_FILE up -d --no-build && docker image prune -f"
 if ($LASTEXITCODE -ne 0) { throw "Deploy failed" }
 
 # Step 6: Cleanup local tar

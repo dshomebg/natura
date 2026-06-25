@@ -36,6 +36,11 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Next's standalone tracing misses sharp's native libvips (@img/sharp-libvips-*)
+# on musl, causing "libvips-cpp.so not found". Copy the full @img + sharp.
+COPY --from=builder /app/node_modules/@img ./node_modules/@img
+COPY --from=builder /app/node_modules/sharp ./node_modules/sharp
+
 # Uploaded media lives here (mount a volume in compose to persist it).
 RUN mkdir -p /app/media && chown nextjs:nodejs /app/media
 
