@@ -6,8 +6,13 @@ $ErrorActionPreference = "Stop"
 
 # Configuration
 $REMOTE_USER  = "root"
-$REMOTE_HOST  = "78.46.93.85"
+$REMOTE_HOST  = "SET-NATURA-SERVER-IP"   # <-- попълни IP-то на сървъра на NATURA
 $REMOTE_DIR   = "/opt/natura"
+
+if ($REMOTE_HOST -eq "SET-NATURA-SERVER-IP") {
+    Write-Host "[X] Set `$REMOTE_HOST to the NATURA server IP first." -ForegroundColor Red
+    exit 1
+}
 $COMPOSE_FILE = "docker-compose.prod.yml"
 $IMAGE        = "natura-prod-app:latest"
 $TAR          = "natura-app-image.tar"
