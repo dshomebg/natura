@@ -9,8 +9,7 @@ npm-debug.log*
 .env
 .env*.local
 .env.prod
-README.md
-continue.md
+docs
 docker-compose.yml
 docker-compose.prod.yml
 deploy

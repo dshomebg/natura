@@ -39,7 +39,7 @@ npm run dev                 # сайт на http://localhost:3100
 - Продукционен build минава; standalone сървър сервира home/admin/api (200)
 
 ## 🚀 Деплой
-Виж **`deploy/README.md`**. Накратко:
+Виж **`docs/deploy.md`**. Накратко:
 ```bash
 cp .env.prod.example .env.prod   # попълни PAYLOAD_SECRET, DB парола, домейн, SMTP
 docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
