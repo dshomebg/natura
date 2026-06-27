@@ -9,12 +9,21 @@ import Testimonials from "@/components/homes/home-1/Testimonials";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-export const metadata = {
-  title: "About || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
-};
+import { getPageMeta } from "@/lib/data";
 
-export default function page() {
+export async function generateMetadata() {
+  const m = await getPageMeta();
+  return {
+    title: m?.about?.metaTitle || "За нас — NATURA",
+    description:
+      m?.about?.metaDescription ||
+      "Запознайте се с NATURA — строителство, ремонти и архитектура.",
+  };
+}
+
+export default async function page() {
+  const m = await getPageMeta();
+  const heading = m?.about?.heading || "За нас";
   return (
     <>
       <Header2 />
@@ -35,7 +44,7 @@ export default function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  About Us
+                  {heading}
                 </h1>
               </div>
               <ul
@@ -43,12 +52,12 @@ export default function page() {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>About Us</li>
+                <li>{heading}</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

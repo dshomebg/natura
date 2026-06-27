@@ -15,8 +15,8 @@ import Skills from "@/components/homes/home-1/Skills";
 import Team from "@/components/homes/home-1/Team";
 import Testimonials from "@/components/homes/home-1/Testimonials";
 export const metadata = {
-  title: "Home 1 Onepage || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
+  title: "NATURA — строителство, ремонти и архитектура",
+  description: "NATURA — строителство, ремонти и архитектура.",
 };
 export default function Home() {
   return (

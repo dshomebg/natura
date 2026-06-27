@@ -5,8 +5,8 @@ import Team from "@/components/team/Team";
 import Link from "next/link";
 import Image from "next/image";
 export const metadata = {
-  title: "Team || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
+  title: "Екип — NATURA",
+  description: "Запознайте се с екипа на NATURA.",
 };
 export default function page() {
   return (
@@ -29,7 +29,7 @@ export default function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Team
+                  Екип
                 </h1>
               </div>
               <ul
@@ -37,12 +37,12 @@ export default function page() {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Team</li>
+                <li>Екип</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

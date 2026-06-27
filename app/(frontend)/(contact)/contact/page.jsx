@@ -6,11 +6,20 @@ import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import Image from "next/image";
 import Link from "next/link";
-export const metadata = {
-  title: "Contact || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
-};
-export default function page() {
+import { getPageMeta } from "@/lib/data";
+
+export async function generateMetadata() {
+  const m = await getPageMeta();
+  return {
+    title: m?.contact?.metaTitle || "Контакти — NATURA",
+    description:
+      m?.contact?.metaDescription || "Свържете се с екипа на NATURA.",
+  };
+}
+
+export default async function page() {
+  const m = await getPageMeta();
+  const heading = m?.contact?.heading || "Контакти";
   return (
     <>
       <Header2 />
@@ -31,7 +40,7 @@ export default function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Contact
+                  {heading}
                 </h1>
               </div>
               <ul
@@ -39,12 +48,12 @@ export default function page() {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Contact</li>
+                <li>{heading}</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

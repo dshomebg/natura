@@ -5,8 +5,8 @@ import Header2 from "@/components/headers/Header2";
 import Image from "next/image";
 import Link from "next/link";
 export const metadata = {
-  title: "Blog Grid || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
+  title: "Блог — NATURA",
+  description: "Новини и статии от NATURA.",
 };
 export default function page() {
   return (
@@ -29,7 +29,7 @@ export default function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Blogs Grid
+                  Блог
                 </h1>
               </div>
               <ul
@@ -37,12 +37,12 @@ export default function page() {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Blogs Grid</li>
+                <li>Блог</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

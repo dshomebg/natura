@@ -49,6 +49,15 @@ ssh -i ~/.ssh/pagagal_deploy root@157.90.129.12 \
 Качените файлове (media) се пазят във volume `natura-prod-media`. При нужда се
 прехвърлят по същия начин (tar → volume).
 
+> ⚠️ Media файлове, прехвърлени от Windows, идват със чужд uid и app потребителят
+> (`nextjs`, uid 1001) не може да пише в тях → `EACCES` (400) при качване в админа.
+> `deploy-prod.ps1` го поправя автоматично (стъпка 6: `chown` на volume-а към
+> 1001:65533). Ако прехвърляш media ръчно без пълен деплой, пусни:
+> ```bash
+> docker run --rm -v natura-prod-media:/media alpine \
+>   sh -c 'chown -R 1001:65533 /media && chmod -R u+rwX /media'
+> ```
+
 ## Админ
 https://www.natura-bg.com/admin — текущият потребител дойде с прехвърлената база
 (`s.panev@gmail.com`). ⚠️ Смени паролата.

@@ -3,18 +3,25 @@ import Header2 from "@/components/headers/Header2";
 import ApartmentsList from "@/components/apartments/ApartmentsList";
 import Image from "next/image";
 import Link from "next/link";
-import { getApartments, getProjects } from "@/lib/data";
+import { getApartments, getProjects, getPageMeta } from "@/lib/data";
 
-export const metadata = {
-  title: "Апартаменти за продажба — NATURA",
-  description: "Свободни апартаменти в проектите на NATURA.",
-};
+export async function generateMetadata() {
+  const m = await getPageMeta();
+  return {
+    title: m?.apartments?.metaTitle || "Апартаменти за продажба — NATURA",
+    description:
+      m?.apartments?.metaDescription ||
+      "Свободни апартаменти в проектите на NATURA.",
+  };
+}
 
 export default async function page() {
-  const [apartments, projects] = await Promise.all([
+  const [apartments, projects, m] = await Promise.all([
     getApartments(),
     getProjects(),
+    getPageMeta(),
   ]);
+  const heading = m?.apartments?.heading || "Апартаменти";
 
   return (
     <>
@@ -36,7 +43,7 @@ export default async function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Апартаменти
+                  {heading}
                 </h1>
               </div>
               <ul className="breadcrumb-items wow fadeInUp" data-wow-delay=".5s">
@@ -46,7 +53,7 @@ export default async function page() {
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Апартаменти</li>
+                <li>{heading}</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

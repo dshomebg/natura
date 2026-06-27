@@ -5,8 +5,8 @@ import React from "react";
 import Image from "next/image";
 import AnimatedText from "@/components/common/AnimatedText";
 export const metadata = {
-  title: "404 || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
+  title: "Грешка 404 — NATURA",
+  description: "Страницата не е намерена.",
 };
 export default function page() {
   return (
@@ -29,7 +29,7 @@ export default function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Error Page
+                  Грешка 404
                 </h1>
               </div>
               <ul
@@ -37,12 +37,12 @@ export default function page() {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Error Page</li>
+                <li>Грешка 404</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

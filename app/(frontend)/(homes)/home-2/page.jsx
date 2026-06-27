@@ -14,8 +14,8 @@ import React from "react";
 import Image from "next/image";
 import Services from "@/components/homes/home-2/Services";
 export const metadata = {
-  title: "Home 2 || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
+  title: "NATURA — строителство, ремонти и архитектура",
+  description: "NATURA — строителство, ремонти и архитектура.",
 };
 export default function page() {
   return (

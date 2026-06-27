@@ -6,8 +6,8 @@ import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 export const metadata = {
-  title: "Pricing || Xbuild - Constriction nextjs Template",
-  description: "Xbuild - Constriction nextjs Template",
+  title: "Цени — NATURA",
+  description: "Ценоразпис за услугите на NATURA.",
 };
 export default function page() {
   return (
@@ -30,7 +30,7 @@ export default function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Pricing
+                  Цени
                 </h1>
               </div>
               <ul
@@ -38,12 +38,12 @@ export default function page() {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Pricing</li>
+                <li>Цени</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

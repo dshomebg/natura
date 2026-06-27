@@ -20,6 +20,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { HomePage } from './globals/HomePage'
+import { PageMeta } from './globals/PageMeta'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -64,7 +65,7 @@ export default buildConfig({
     Team,
     Inquiries,
   ],
-  globals: [SiteSettings, Header, Footer, HomePage],
+  globals: [SiteSettings, Header, Footer, HomePage, PageMeta],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

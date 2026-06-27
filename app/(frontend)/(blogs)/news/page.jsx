@@ -4,16 +4,21 @@ import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
 import Image from "next/image";
 import Link from "next/link";
-import { getPosts, getCategories } from "@/lib/data";
+import { getPosts, getCategories, getPageMeta } from "@/lib/data";
 
-export const metadata = {
-  title: "Блог — NATURA",
-  description: "Новини и статии от NATURA.",
-};
+export async function generateMetadata() {
+  const m = await getPageMeta();
+  return {
+    title: m?.news?.metaTitle || "Блог — NATURA",
+    description: m?.news?.metaDescription || "Новини и статии от NATURA.",
+  };
+}
 
 export default async function page() {
   const posts = await getPosts();
   const categories = await getCategories("blog");
+  const m = await getPageMeta();
+  const heading = m?.news?.heading || "Блог";
   const recent = posts.slice(0, 3);
 
   return (
@@ -36,7 +41,7 @@ export default async function page() {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Блог
+                  {heading}
                 </h1>
               </div>
               <ul
@@ -49,7 +54,7 @@ export default async function page() {
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Блог</li>
+                <li>{heading}</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

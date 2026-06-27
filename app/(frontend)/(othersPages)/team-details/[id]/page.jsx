@@ -37,7 +37,7 @@ export default async function page({ params }) {
             <div className="page-heading">
               <div className="breadcrumb-sub-title">
                 <h1 className="wow fadeInUp" data-wow-delay=".3s">
-                  Team Details
+                  Екип
                 </h1>
               </div>
               <ul
@@ -45,12 +45,12 @@ export default async function page({ params }) {
                 data-wow-delay=".5s"
               >
                 <li>
-                  <Link href={`/`}> Home </Link>
+                  <Link href={`/`}> Начало </Link>
                 </li>
                 <li>
                   <i className="fa-sharp fa-solid fa-slash-forward" />
                 </li>
-                <li>Team Details</li>
+                <li>Екип</li>
               </ul>
             </div>
             <div className="breadcrumb-image">

@@ -1,7 +1,15 @@
+import { cache } from 'react'
 import { getPayloadClient } from './payload'
 
 // Centralised server-side queries against Payload (Local API).
 // depth: 1 populates upload/relationship fields (media URLs, linked docs).
+
+// Per-page SEO + headings. Cached per request so generateMetadata() and the
+// page component share a single DB read.
+export const getPageMeta = cache(async () => {
+  const payload = await getPayloadClient()
+  return payload.findGlobal({ slug: 'page-meta', depth: 0 })
+})
 
 export const getProjects = async () => {
   const payload = await getPayloadClient()
